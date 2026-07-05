@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>NGL Spammer | Logs</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="icon" href="https://i.imgur.com/vqadMbv.png" type="image/png">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Same base styles as index.html – copy the entire style block */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Inter', 'Segoe UI', sans-serif;
+            min-height: 100vh;
+            background: url('https://images.unsplash.com/photo-1500382017468-9049fed747ef?q=80&w=2073&auto=format') no-repeat center center/cover;
+            background-attachment: fixed;
+            background-size: cover;
+            background-position: center;
+            position: relative;
+            transition: background 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+            padding: 30px 20px;
+        }
+        body.dark-mode {
+            background: url('https://images.unsplash.com/photo-1506905925346-21bda4d32df4?q=80&w=2070&auto=format') no-repeat center center/cover;
+            background-attachment: fixed;
+            background-size: cover;
+            background-position: center;
+        }
+        body.dark-mode::before { background: rgba(0, 0, 0, 0.7); }
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.35);
+            z-index: 0;
+            transition: background 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        /* ===== NAV ===== */
+        nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: rgba(255,255,255,0.12);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255,255,255,0.15);
+            padding: 12px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 1000;
+            box-shadow: 0 4px 30px rgba(0,0,0,0.1);
+            transition: all 0.4s cubic-bezier(0.4,0,0.2,1);
+        }
+        body.dark-mode nav { background: rgba(0,0,0,0.5); border-bottom: 1px solid rgba(255,255,255,0.08); }
+        .navbar-left { display: flex; align-items: center; gap: 20px; }
+        .hamburger {
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+            padding: 5px;
+            z-index: 1001;
+        }
+        .hamburger div {
+            width: 25px;
+            height: 3px;
+            background: rgba(255,255,255,0.9);
+            border-radius: 3px;
+            transition: all 0.3s ease;
+        }
+        .hamburger.active div:nth-child(1) { transform: rotate(45deg) translate(5px,5px); }
+        .hamburger.active div:nth-child(2) { opacity: 0; }
+        .hamburger.active div:nth-child(3) { transform: rotate(-45deg) translate(7px,-7px); }
+        nav img { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; border: 2px solid rgba(255,255,255,0.4); }
+        body.dark-mode nav img { border-color: rgba(255,255,255,0.2); }
+        nav h6 { color: rgba(255,255,255,0.95); font-size: 1rem; font-weight: 600; letter-spacing: 0.5px; }
+        #theme-button {
+            font-size: 1.3rem;
+            color: rgba(255,255,255,0.9);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        #theme-button:hover { transform: rotate(20deg) scale(1.05); background: rgba(255,255,255,0.2); }
+        body.dark-mode #theme-button { background: rgba(255,255,255,0.05); border-color: rgba(255,255,255,0.05); }
+
+        /* ===== SIDEBAR ===== */
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: -340px;
+            width: 320px;
+            height: 100vh;
+            background: rgba(10,10,30,0.92);
+            backdrop-filter: blur(25px);
+            border-right: 1px solid rgba(255,255,255,0.08);
+            transition: left 0.4s cubic-bezier(0.4,0,0.2,1);
+            z-index: 999;
+            padding: 25px 20px;
+            overflow-y: auto;
+        }
+        body.dark-mode .sidebar { background: rgba(0,0,0,0.95); }
+        .sidebar.active { left: 0; }
+        .sidebar-header { text-align: center; margin-bottom: 30px; padding-bottom: 20px; border-bottom: 1px solid rgba(255,255,255,0.08); }
+        .sidebar-header h2 { color: #4caf50; font-size: 1.5rem; margin-bottom: 5px; font-weight: 700; }
+        .subtitle { color: rgba(255,255,255,0.5); font-size: 0.7rem; letter-spacing: 1px; text-transform: uppercase; }
+        .sidebar-menu { margin-bottom: 25px; }
+        .menu-item {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 12px 16px;
+            color: rgba(255,255,255,0.7);
+            text-decoration: none;
+            border-radius: 14px;
+            transition: all 0.3s ease;
+            margin-bottom: 4px;
+            font-weight: 500;
+            font-size: 0.95rem;
+        }
+        .menu-item:hover { background: rgba(76,175,80,0.2); color: white; transform: translateX(5px); }
+        .menu-item.active { background: rgba(76,175,80,0.3); color: white; }
+        .menu-item i { width: 24px; font-size: 1.1rem; text-align: center; }
+        .menu-divider { height: 1px; background: rgba(255,255,255,0.06); margin: 15px 0; }
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            backdrop-filter: blur(4px);
+            z-index: 998;
+            display: none;
+            opacity: 0;
+            transition: opacity 0.4s ease;
+        }
+        .overlay.active { display: block; opacity: 1; }
+
+        /* ===== MAIN ===== */
+        .main-wrapper {
+            position: relative;
+            z-index: 1;
+            margin-left: 0;
+            transition: margin-left 0.4s cubic-bezier(0.4,0,0.2,1);
+            padding-top: 80px;
+            min-height: 100vh;
+        }
+        .main-wrapper.shifted { margin-left: 320px; }
+        .container { max-width: 900px; margin: 0 auto; position: relative; z-index: 1; }
+
+        .glass-card {
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(20px);
+            border-radius: 30px;
+            border: 1px solid rgba(255,255,255,0.18);
+            box-shadow: 0 8px 32px rgba(0,0,0,0.08);
+            padding: 30px 35px;
+            margin-bottom: 25px;
+            transition: all 0.4s cubic-bezier(0.4,0,0.2,1);
+        }
+        .glass-card:hover { transform: translateY(-5px); box-shadow: 0 15px 50px rgba(0,0,0,0.12); border-color: rgba(255,255,255,0.25); }
+        body.dark-mode .glass-card { background: rgba(0,0,0,0.35); border-color: rgba(255,255,255,0.08); box-shadow: 0 8px 32px rgba(0,0,0,0.3); }
+
+        .fade-in { opacity: 0; transform: translateY(30px); transition: opacity 0.8s ease, transform 0.8s ease; }
+        .fade-in.visible { opacity: 1; transform: translateY(0); }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 18px;
+            margin-bottom: 5px;
+            flex-wrap: wrap;
+        }
+        .logo-icon {
+            font-size: 48px;
+            background: linear-gradient(135deg, #ffb3ff, #9effff, #c084fc);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        h1 { font-size: 40px; font-weight: 800; background: linear-gradient(120deg, #FFFFFF, #f0b3ff, #b6eaff, #ffd6b3); background-size: 300% 300%; -webkit-background-clip: text; background-clip: text; color: transparent; animation: shimmerHolo 5s ease infinite; }
+        @keyframes shimmerHolo { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
+        h1 span { font-weight: 500; background: linear-gradient(135deg, #ffd966, #ffb3ba, #a0e7ff); -webkit-background-clip: text; background-clip: text; }
+        .tagline { text-align: center; color: rgba(230,220,255,0.8); margin-bottom: 5px; font-size: 1rem; font-weight: 400; }
+        body.dark-mode .tagline { color: rgba(200,190,230,0.7); }
+
+        /* ===== LOGS ===== */
+        .log-item {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 12px 16px;
+            background: rgba(0,0,0,0.2);
+            border-radius: 14px;
+            margin-bottom: 10px;
+            border: 1px solid rgba(255,255,255,0.04);
+            transition: all 0.3s ease;
+        }
+        .log-item:hover { background: rgba(0,0,0,0.3); border-color: rgba(255,255,255,0.08); }
+        .log-item .log-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            font-size: 0.9rem;
+        }
+        .log-item .log-icon.success { background: rgba(76,175,80,0.2); color: #81c784; }
+        .log-item .log-icon.error { background: rgba(244,67,54,0.2); color: #ef9a9a; }
+        .log-item .log-icon.info { background: rgba(33,150,243,0.2); color: #64b5f6; }
+        .log-item .log-details { flex: 1; }
+        .log-item .log-details .log-message {
+            color: white;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+        .log-item .log-details .log-username {
+            color: rgba(255,255,255,0.4);
+            font-size: 0.75rem;
+            margin-top: 2px;
+        }
+        .log-item .log-details .log-username .hidden {
+            background: rgba(255,255,255,0.05);
+            padding: 1px 6px;
+            border-radius: 4px;
+            font-family: monospace;
+            letter-spacing: 1px;
+        }
+        .log-item .log-time {
+            color: rgba(255,255,255,0.3);
+            font-size: 0.7rem;
+            margin-top: 2px;
+        }
+        .log-item .log-amount {
+            color: rgba(255,255,255,0.4);
+            font-size: 0.8rem;
+            font-weight: 500;
+            padding: 2px 10px;
+            border-radius: 20px;
+            background: rgba(255,255,255,0.05);
+        }
+        .no-logs {
+            text-align: center;
+            padding: 40px;
+            color: rgba(255,255,255,0.3);
+        }
+        .no-logs i { font-size: 3rem; display: block; margin-bottom: 10px; opacity: 0.3; }
+        .clear-logs-btn {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.08);
+            color: rgba(255,255,255,0.5);
+            padding: 6px 16px;
+            border-radius: 30px;
+            cursor: pointer;
+            font-size: 0.75rem;
+            transition: all 0.3s ease;
+        }
+        .clear-logs-btn:hover {
+            background: rgba(255,68,68,0.15);
+            border-color: rgba(255,68,68,0.2);
+            color: #ff6b6b;
+        }
+
+        /* ===== FOOTER ===== */
+        .footer {
+            text-align: center;
+            padding: 25px 20px 10px;
+            color: rgba(255,255,255,0.4);
+            font-size: 0.8rem;
+            letter-spacing: 0.5px;
+            border-top: 1px solid rgba(255,255,255,0.05);
+            margin-top: 30px;
+        }
+        .footer i { color: rgba(255,255,255,0.3); margin: 0 4px; }
+        .footer .heart { color: #ff6b6b; animation: heartbeat 1.5s ease infinite; }
+        @keyframes heartbeat { 0%,100% { transform: scale(1); } 50% { transform: scale(1.2); } }
+        body.dark-mode .footer { color: rgba(255,255,255,0.3); }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 760px) {
+            .glass-card { padding: 24px; }
+            h1 { font-size: 32px; }
+            .logo-icon { font-size: 38px; }
+            nav { padding: 10px 16px; }
+            nav h6 { display: none; }
+            .main-wrapper.shifted { margin-left: 0; }
+            .sidebar { width: 300px; left: -320px; }
+            #theme-button { width: 36px; height: 36px; font-size: 1.1rem; }
+            .log-item { flex-wrap: wrap; gap: 8px; }
+        }
+        @media (max-width: 480px) {
+            .glass-card { padding: 18px; }
+            h1 { font-size: 26px; }
+            .logo-icon { font-size: 30px; }
+        }
+    </style>
+</head>
+<body>
+    <!-- ===== NAV ===== -->
+    <nav>
+        <div class="navbar-left">
+            <div class="hamburger" id="hamburger" onclick="toggleMenu()"><div></div><div></div><div></div></div>
+            <img src="https://iili.io/Cak91iN.jpg" alt="logo">
+            <h6>NGL Spammer</h6>
+        </div>
+        <i class="fas fa-moon" id="theme-button"></i>
+    </nav>
+
+    <!-- ===== SIDEBAR ===== -->
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-header"><h2>Menu</h2><div class="subtitle">NGL Spammer Navigation</div></div>
+        <div class="sidebar-menu">
+            <a href="/" class="menu-item"><i class="fas fa-home"></i> HOME</a>
+            <a href="/logs.html" class="menu-item active"><i class="fas fa-scroll"></i> LOGS</a>
+            <a href="/api-docs.html" class="menu-item"><i class="fas fa-code"></i> API DOCS</a>
+        </div>
+        <div class="menu-divider"></div>
+        <div class="sidebar-menu">
+            <a href="/profile.html" class="menu-item"><i class="fas fa-user"></i> PROFILE</a>
+            <a href="/settings.html" class="menu-item"><i class="fas fa-cog"></i> SETTINGS</a>
+        </div>
+    </div>
+
+    <div class="overlay" id="overlay" onclick="closeMenu()"></div>
+
+    <!-- ===== MAIN ===== -->
+    <div class="main-wrapper" id="mainWrapper">
+        <div class="container">
+            <!-- Header -->
+            <div class="glass-card fade-in">
+                <div class="logo-container"><i class="fas fa-scroll logo-icon"></i><h1>Activity<span>LOGS</span></h1></div>
+                <p class="tagline">View your message sending history (usernames hidden)</p>
+            </div>
+
+            <!-- Logs -->
+            <div class="glass-card fade-in">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 10px;">
+                    <h2 style="font-size: 1.3rem; color: white; display: flex; align-items: center; gap: 10px;">
+                        <i class="fas fa-list" style="color: #4caf50;"></i> Recent Activity
+                    </h2>
+                    <button class="clear-logs-btn" onclick="clearLogs()"><i class="fas fa-trash-alt"></i> Clear All</button>
+                </div>
+                <div id="logsContainer">
+                    <div class="no-logs"><i class="fas fa-inbox"></i><p>No logs yet. Start sending messages to see activity here.</p></div>
+                </div>
+            </div>
+
+            <!-- Footer -->
+            <div class="footer">
+                <i class="fas fa-copyright"></i> 2026 All Rights Reserved.
+                <i class="fas fa-heart heart"></i> Made with <span style="color: #ff6b6b;">❤</span> by Developer
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ===== SIDEBAR =====
+        function toggleMenu() {
+            document.getElementById('sidebar').classList.toggle('active');
+            document.getElementById('overlay').classList.toggle('active');
+            document.getElementById('hamburger').classList.toggle('active');
+            if (window.innerWidth > 768) document.getElementById('mainWrapper').classList.toggle('shifted');
+        }
+        function closeMenu() {
+            document.getElementById('sidebar').classList.remove('active');
+            document.getElementById('overlay').classList.remove('active');
+            document.getElementById('hamburger').classList.remove('active');
+            document.getElementById('mainWrapper').classList.remove('shifted');
+        }
+        document.addEventListener('click', function(e) {
+            const sidebar = document.getElementById('sidebar');
+            const hamburger = document.getElementById('hamburger');
+            if (window.innerWidth <= 768 && sidebar.classList.contains('active')) {
+                if (!sidebar.contains(e.target) && !hamburger.contains(e.target)) closeMenu();
+            }
+        });
+
+        // ===== THEME =====
+        const themeBtn = document.getElementById('theme-button');
+        const saved = localStorage.getItem('nglspammer-theme');
+        if (saved === 'dark') { document.body.classList.add('dark-mode'); themeBtn.className = 'fas fa-sun'; }
+        themeBtn.addEventListener('click', () => {
+            document.body.classList.toggle('dark-mode');
+            const isDark = document.body.classList.contains('dark-mode');
+            themeBtn.className = isDark ? 'fas fa-sun' : 'fas fa-moon';
+            localStorage.setItem('nglspammer-theme', isDark ? 'dark' : 'light');
+        });
+
+        // ===== FADE-IN =====
+        function handleScroll() {
+            document.querySelectorAll('.fade-in').forEach(el => {
+                if (el.getBoundingClientRect().top < window.innerHeight - 80) el.classList.add('visible');
+            });
+        }
+        window.addEventListener('scroll', handleScroll);
+
+        // ===== LOGS =====
+        let logs = JSON.parse(localStorage.getItem('nglspammer_logs') || '[]');
+
+        function renderLogs() {
+            const container = document.getElementById('logsContainer');
+            if (logs.length === 0) {
+                container.innerHTML = `<div class="no-logs"><i class="fas fa-inbox"></i><p>No logs yet. Start sending messages to see activity here.</p></div>`;
+                return;
+            }
+            let html = '';
+            logs.forEach(log => {
+                const iconClass = log.status === 'success' ? 'success' : (log.status === 'error' ? 'error' : 'info');
+                const icon = log.status === 'success' ? 'fa-check-circle' : (log.status === 'error' ? 'fa-times-circle' : 'fa-info-circle');
+                const date = new Date(log.timestamp);
+                const timeStr = date.toLocaleString('en-US', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit', hour12: false });
+                // Hide username: show only first character + asterisks
+                let usernameDisplay = '';
+                if (log.username && log.username.length > 0) {
+                    const firstChar = log.username.charAt(0);
+                    const rest = log.username.slice(1).replace(/./g, '*');
+                    usernameDisplay = firstChar + rest;
+                } else {
+                    usernameDisplay = '[hidden]';
+                }
+                html += `
+                    <div class="log-item">
+                        <div class="log-icon ${iconClass}"><i class="fas ${icon}"></i></div>
+                        <div class="log-details">
+                            <div class="log-message">${log.message || `${log.sent}/${log.amount} messages sent`}</div>
+                            <div class="log-username">👤 <span class="hidden">${usernameDisplay}</span></div>
+                            <div class="log-time">${timeStr}</div>
+                        </div>
+                        <div class="log-amount">${log.sent}/${log.amount}</div>
+                    </div>
+                `;
+            });
+            container.innerHTML = html;
+        }
+
+        function clearLogs() {
+            if (confirm('Clear all logs?')) {
+                logs = [];
+                localStorage.setItem('nglspammer_logs', JSON.stringify(logs));
+                renderLogs();
+            }
+        }
+
+        // ===== INIT =====
+        window.addEventListener('load', function() {
+            renderLogs();
+            handleScroll();
+        });
+    </script>
+</body>
+</html>
