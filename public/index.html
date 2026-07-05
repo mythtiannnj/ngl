@@ -1,0 +1,640 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>NGL Spammer | Home</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="icon" href="https://iili.io/Cak91iN.png" type="image/png">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Inter', 'Segoe UI', sans-serif;
+            min-height: 100vh;
+            background: url('https://images.unsplash.com/photo-1500382017468-9049fed747ef?q=80&w=2073&auto=format') no-repeat center center/cover;
+            background-attachment: fixed;
+            background-size: cover;
+            background-position: center;
+            position: relative;
+            transition: background 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+            padding: 30px 20px;
+        }
+
+        body.dark-mode {
+            background: url('https://images.unsplash.com/photo-1506905925346-21bda4d32df4?q=80&w=2070&auto=format') no-repeat center center/cover;
+            background-attachment: fixed;
+            background-size: cover;
+            background-position: center;
+        }
+
+        body.dark-mode::before { background: rgba(0, 0, 0, 0.7); }
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.35);
+            z-index: 0;
+            transition: background 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        /* ===== GREETING MODAL ===== */
+        .greeting-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(12px);
+            z-index: 2000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.6s ease, visibility 0.6s ease;
+        }
+        .greeting-modal.show { opacity: 1; visibility: visible; }
+        .greeting-card {
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(25px);
+            border-radius: 35px;
+            border: 1px solid rgba(255,255,255,0.2);
+            padding: 45px 50px;
+            text-align: center;
+            max-width: 480px;
+            width: 90%;
+            transform: scale(0.8) translateY(20px);
+            transition: transform 0.6s cubic-bezier(0.34,1.56,0.64,1), opacity 0.6s ease;
+            opacity: 0;
+        }
+        .greeting-modal.show .greeting-card { transform: scale(1) translateY(0); opacity: 1; }
+        body.dark-mode .greeting-card { background: rgba(0,0,0,0.5); border-color: rgba(255,255,255,0.08); }
+        .greeting-icon {
+            font-size: 4rem;
+            background: linear-gradient(135deg, #ffb3ff, #9effff, #c084fc);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            margin-bottom: 15px;
+            animation: wave 2s ease-in-out infinite;
+        }
+        @keyframes wave { 0%,100% { transform: rotate(0deg); } 25% { transform: rotate(10deg); } 75% { transform: rotate(-10deg); } }
+        .greeting-title { color: white; font-size: 2rem; font-weight: 700; margin-bottom: 8px; }
+        .greeting-subtitle { color: rgba(255,255,255,0.7); font-size: 0.95rem; margin-bottom: 20px; }
+        .greeting-time {
+            color: #4caf50;
+            font-size: 1.1rem;
+            font-weight: 500;
+            margin-bottom: 20px;
+            background: rgba(0,0,0,0.2);
+            padding: 8px 16px;
+            border-radius: 40px;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .greeting-privacy {
+            background: rgba(255,200,100,0.1);
+            border: 1px solid rgba(255,200,100,0.2);
+            border-radius: 16px;
+            padding: 14px 18px;
+            margin-bottom: 25px;
+            font-size: 0.8rem;
+            color: rgba(255,255,255,0.7);
+            line-height: 1.5;
+            text-align: left;
+        }
+        .greeting-privacy strong { color: #ffd966; display: block; margin-bottom: 4px; font-size: 0.85rem; }
+        .greeting-privacy i { color: #ffb3ba; margin-right: 6px; }
+        .greeting-button {
+            background: linear-gradient(135deg, rgba(76,175,80,0.9), rgba(46,125,50,0.9));
+            border: none;
+            color: white;
+            padding: 14px 35px;
+            border-radius: 50px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 8px 25px rgba(76,175,80,0.3);
+        }
+        .greeting-button:hover { transform: translateY(-3px) scale(1.02); box-shadow: 0 12px 35px rgba(76,175,80,0.4); }
+
+        /* ===== NAV ===== */
+        nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: rgba(255,255,255,0.12);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255,255,255,0.15);
+            padding: 12px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 1000;
+            box-shadow: 0 4px 30px rgba(0,0,0,0.1);
+            transition: all 0.4s cubic-bezier(0.4,0,0.2,1);
+        }
+        body.dark-mode nav { background: rgba(0,0,0,0.5); border-bottom: 1px solid rgba(255,255,255,0.08); }
+        .navbar-left { display: flex; align-items: center; gap: 20px; }
+        .hamburger {
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+            padding: 5px;
+            z-index: 1001;
+        }
+        .hamburger div {
+            width: 25px;
+            height: 3px;
+            background: rgba(255,255,255,0.9);
+            border-radius: 3px;
+            transition: all 0.3s ease;
+        }
+        .hamburger.active div:nth-child(1) { transform: rotate(45deg) translate(5px,5px); }
+        .hamburger.active div:nth-child(2) { opacity: 0; }
+        .hamburger.active div:nth-child(3) { transform: rotate(-45deg) translate(7px,-7px); }
+        nav img { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; border: 2px solid rgba(255,255,255,0.4); }
+        body.dark-mode nav img { border-color: rgba(255,255,255,0.2); }
+        nav h6 { color: rgba(255,255,255,0.95); font-size: 1rem; font-weight: 600; letter-spacing: 0.5px; }
+        #theme-button {
+            font-size: 1.3rem;
+            color: rgba(255,255,255,0.9);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        #theme-button:hover { transform: rotate(20deg) scale(1.05); background: rgba(255,255,255,0.2); }
+        body.dark-mode #theme-button { background: rgba(255,255,255,0.05); border-color: rgba(255,255,255,0.05); }
+
+        /* ===== SIDEBAR ===== */
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: -340px;
+            width: 320px;
+            height: 100vh;
+            background: rgba(10,10,30,0.92);
+            backdrop-filter: blur(25px);
+            border-right: 1px solid rgba(255,255,255,0.08);
+            transition: left 0.4s cubic-bezier(0.4,0,0.2,1);
+            z-index: 999;
+            padding: 25px 20px;
+            overflow-y: auto;
+        }
+        body.dark-mode .sidebar { background: rgba(0,0,0,0.95); }
+        .sidebar.active { left: 0; }
+        .sidebar-header { text-align: center; margin-bottom: 30px; padding-bottom: 20px; border-bottom: 1px solid rgba(255,255,255,0.08); }
+        .sidebar-header h2 { color: #4caf50; font-size: 1.5rem; margin-bottom: 5px; font-weight: 700; }
+        .subtitle { color: rgba(255,255,255,0.5); font-size: 0.7rem; letter-spacing: 1px; text-transform: uppercase; }
+        .sidebar-menu { margin-bottom: 25px; }
+        .menu-item {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 12px 16px;
+            color: rgba(255,255,255,0.7);
+            text-decoration: none;
+            border-radius: 14px;
+            transition: all 0.3s ease;
+            margin-bottom: 4px;
+            font-weight: 500;
+            font-size: 0.95rem;
+        }
+        .menu-item:hover { background: rgba(76,175,80,0.2); color: white; transform: translateX(5px); }
+        .menu-item.active { background: rgba(76,175,80,0.3); color: white; }
+        .menu-item i { width: 24px; font-size: 1.1rem; text-align: center; }
+        .menu-divider { height: 1px; background: rgba(255,255,255,0.06); margin: 15px 0; }
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            backdrop-filter: blur(4px);
+            z-index: 998;
+            display: none;
+            opacity: 0;
+            transition: opacity 0.4s ease;
+        }
+        .overlay.active { display: block; opacity: 1; }
+
+        /* ===== MAIN ===== */
+        .main-wrapper {
+            position: relative;
+            z-index: 1;
+            margin-left: 0;
+            transition: margin-left 0.4s cubic-bezier(0.4,0,0.2,1);
+            padding-top: 80px;
+            min-height: 100vh;
+        }
+        .main-wrapper.shifted { margin-left: 320px; }
+        .container { max-width: 900px; margin: 0 auto; position: relative; z-index: 1; }
+
+        .glass-card {
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(20px);
+            border-radius: 30px;
+            border: 1px solid rgba(255,255,255,0.18);
+            box-shadow: 0 8px 32px rgba(0,0,0,0.08);
+            padding: 30px 35px;
+            margin-bottom: 25px;
+            transition: all 0.4s cubic-bezier(0.4,0,0.2,1);
+        }
+        .glass-card:hover { transform: translateY(-5px); box-shadow: 0 15px 50px rgba(0,0,0,0.12); border-color: rgba(255,255,255,0.25); }
+        body.dark-mode .glass-card { background: rgba(0,0,0,0.35); border-color: rgba(255,255,255,0.08); box-shadow: 0 8px 32px rgba(0,0,0,0.3); }
+
+        .fade-in { opacity: 0; transform: translateY(30px); transition: opacity 0.8s ease, transform 0.8s ease; }
+        .fade-in.visible { opacity: 1; transform: translateY(0); }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 18px;
+            margin-bottom: 5px;
+            flex-wrap: wrap;
+        }
+        .logo-icon {
+            font-size: 48px;
+            background: linear-gradient(135deg, #ffb3ff, #9effff, #c084fc);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        h1 { font-size: 40px; font-weight: 800; background: linear-gradient(120deg, #FFFFFF, #f0b3ff, #b6eaff, #ffd6b3); background-size: 300% 300%; -webkit-background-clip: text; background-clip: text; color: transparent; animation: shimmerHolo 5s ease infinite; }
+        @keyframes shimmerHolo { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
+        h1 span { font-weight: 500; background: linear-gradient(135deg, #ffd966, #ffb3ba, #a0e7ff); -webkit-background-clip: text; background-clip: text; }
+        .tagline { text-align: center; color: rgba(230,220,255,0.8); margin-bottom: 5px; font-size: 1rem; font-weight: 400; }
+        body.dark-mode .tagline { color: rgba(200,190,230,0.7); }
+
+        /* ===== FORM ===== */
+        .form-group { margin-bottom: 22px; }
+        .form-group label {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: rgba(255,255,255,0.85);
+            font-weight: 500;
+            margin-bottom: 8px;
+            font-size: 0.95rem;
+        }
+        .form-group label i { color: #4caf50; width: 20px; }
+        .form-group .hint {
+            color: rgba(255,255,255,0.35);
+            font-size: 0.7rem;
+            margin-top: 4px;
+            padding-left: 34px;
+        }
+        input, textarea {
+            width: 100%;
+            padding: 14px 18px;
+            background: rgba(10,10,25,0.5);
+            border: 1px solid rgba(160,130,255,0.25);
+            border-radius: 24px;
+            font-size: 14px;
+            font-family: 'Inter', monospace;
+            color: #f3eefc;
+            transition: all 0.3s ease;
+        }
+        input::placeholder, textarea::placeholder { color: rgba(255,255,255,0.25); }
+        input:focus, textarea:focus {
+            outline: none;
+            border-color: #ff86e0;
+            box-shadow: 0 0 0 3px rgba(200,100,255,0.15);
+            background: rgba(10,10,25,0.7);
+        }
+        body.dark-mode input, body.dark-mode textarea {
+            background: rgba(0,0,0,0.5);
+            border-color: rgba(255,255,255,0.08);
+            color: rgba(255,255,255,0.9);
+        }
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+        .submit-btn {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, rgba(114,72,255,0.9), rgba(197,90,255,0.9), rgba(255,110,180,0.9));
+            border: none;
+            border-radius: 40px;
+            font-size: 18px;
+            font-weight: 700;
+            color: white;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            transition: all 0.3s ease;
+            margin-top: 10px;
+            box-shadow: 0 8px 25px rgba(100,0,255,0.25);
+        }
+        .submit-btn:hover { transform: translateY(-3px); box-shadow: 0 18px 40px rgba(150,50,255,0.35); }
+        .submit-btn:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+
+        .result-message {
+            margin-top: 20px;
+            padding: 14px 20px;
+            border-radius: 60px;
+            text-align: center;
+            font-weight: 600;
+            display: none;
+            animation: fadeSlide 0.3s ease;
+            width: 100%;
+            justify-content: center;
+        }
+        .result-message.success {
+            background: rgba(0,255,180,0.15);
+            border: 1px solid rgba(46,255,176,0.3);
+            color: #c5ffdf;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        .result-message.error {
+            background: rgba(255,70,130,0.15);
+            border: 1px solid rgba(255,110,139,0.3);
+            color: #ffbcbc;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        @keyframes fadeSlide { from { opacity: 0; transform: translateY(-8px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* ===== FOOTER ===== */
+        .footer {
+            text-align: center;
+            padding: 25px 20px 10px;
+            color: rgba(255,255,255,0.4);
+            font-size: 0.8rem;
+            letter-spacing: 0.5px;
+            border-top: 1px solid rgba(255,255,255,0.05);
+            margin-top: 30px;
+        }
+        .footer i { color: rgba(255,255,255,0.3); margin: 0 4px; }
+        .footer .heart { color: #ff6b6b; animation: heartbeat 1.5s ease infinite; }
+        @keyframes heartbeat { 0%,100% { transform: scale(1); } 50% { transform: scale(1.2); } }
+        body.dark-mode .footer { color: rgba(255,255,255,0.3); }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 760px) {
+            .form-row { grid-template-columns: 1fr; gap: 12px; }
+            .glass-card { padding: 24px; }
+            h1 { font-size: 32px; }
+            .logo-icon { font-size: 38px; }
+            nav { padding: 10px 16px; }
+            nav h6 { display: none; }
+            .main-wrapper.shifted { margin-left: 0; }
+            .sidebar { width: 300px; left: -320px; }
+            .greeting-card { padding: 30px 25px; }
+            .greeting-title { font-size: 1.5rem; }
+            #theme-button { width: 36px; height: 36px; font-size: 1.1rem; }
+        }
+        @media (max-width: 480px) {
+            .glass-card { padding: 18px; }
+            h1 { font-size: 26px; }
+            .logo-icon { font-size: 30px; }
+            .submit-btn { font-size: 15px; padding: 14px; }
+            .greeting-card { padding: 25px 18px; }
+            .greeting-title { font-size: 1.3rem; }
+        }
+    </style>
+</head>
+<body>
+    <!-- ===== GREETING MODAL ===== -->
+    <div class="greeting-modal" id="greetingModal">
+        <div class="greeting-card">
+            <div class="greeting-icon"><i class="fas fa-paper-plane"></i></div>
+            <h2 class="greeting-title">Welcome to NGL Spammer!</h2>
+            <p class="greeting-subtitle">Automated NGL message sender. Use responsibly.</p>
+            <div class="greeting-time"><i class="fas fa-clock"></i> <span id="greetingTimeDisplay">Loading...</span></div>
+            <div class="greeting-privacy">
+                <strong><i class="fas fa-shield-alt"></i> Privacy Policy & Disclaimer</strong>
+                <p><i class="fas fa-exclamation-triangle"></i> This tool is for educational purposes only. By using this tool, you acknowledge that you are solely responsible for any actions taken. Use at your own risk. Always comply with NGL's Terms of Service.</p>
+            </div>
+            <button class="greeting-button" onclick="closeGreetingModal()"><i class="fas fa-check-circle"></i> I Understand & Continue</button>
+        </div>
+    </div>
+
+    <!-- ===== NAV ===== -->
+    <nav>
+        <div class="navbar-left">
+            <div class="hamburger" id="hamburger" onclick="toggleMenu()"><div></div><div></div><div></div></div>
+            <img src="https://iili.io/Cak91iN.jpg" alt="logo">
+            <h6>NGL Spammer</h6>
+        </div>
+        <i class="fas fa-moon" id="theme-button"></i>
+    </nav>
+
+    <!-- ===== SIDEBAR ===== -->
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-header"><h2>Menu</h2><div class="subtitle">NGL Spammer Navigation</div></div>
+        <div class="sidebar-menu">
+            <a href="/" class="menu-item active"><i class="fas fa-home"></i> HOME</a>
+            <a href="/logs.html" class="menu-item"><i class="fas fa-scroll"></i> LOGS</a>
+            <a href="/api-docs.html" class="menu-item"><i class="fas fa-code"></i> API DOCS</a>
+        </div>
+        <div class="menu-divider"></div>
+        <div class="sidebar-menu">
+            <a href="/profile.html" class="menu-item"><i class="fas fa-user"></i> PROFILE</a>
+            <a href="/settings.html" class="menu-item"><i class="fas fa-cog"></i> SETTINGS</a>
+        </div>
+    </div>
+
+    <div class="overlay" id="overlay" onclick="closeMenu()"></div>
+
+    <!-- ===== MAIN ===== -->
+    <div class="main-wrapper" id="mainWrapper">
+        <div class="container">
+            <!-- Header -->
+            <div class="glass-card fade-in">
+                <div class="logo-container"><i class="fas fa-paper-plane logo-icon"></i><h1>NGL<span>SPAMMER</span></h1></div>
+                <p class="tagline">Automated NGL Message Sender</p>
+            </div>
+
+            <!-- Form -->
+            <div class="glass-card fade-in">
+                <h2 style="font-size: 1.5rem; color: white; margin-bottom: 5px; display: flex; align-items: center; gap: 12px;">
+                    <i class="fas fa-rocket" style="color: #4caf50;"></i> SEND MESSAGES
+                </h2>
+                <p style="color: rgba(210, 200, 250, 0.7); margin-bottom: 24px; font-size: 0.9rem;">
+                    Enter the NGL username, number of messages, and your message.
+                </p>
+                <form onsubmit="return handleFormSubmit(event)" class="form-container">
+                    <div class="form-group">
+                        <label><i class="fas fa-user"></i> NGL Username</label>
+                        <input type="text" id="usernameInput" placeholder="e.g. mythiannj or https://ngl.link/mythiannj">
+                        <div class="hint">Paste full URL or just the username</div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label><i class="fas fa-hashtag"></i> Amount</label>
+                            <input type="number" id="amountInput" placeholder="1-40" value="5" min="1" max="40">
+                            <div class="hint">Max 40 messages</div>
+                        </div>
+                        <div class="form-group">
+                            <label><i class="fas fa-user-tag"></i> Target</label>
+                            <div style="padding: 12px 18px; background: rgba(10,10,25,0.3); border-radius: 24px; color: rgba(255,255,255,0.5); font-size: 0.9rem; border: 1px solid rgba(255,255,255,0.05);">
+                                <i class="fas fa-info-circle"></i> NGL Link username only
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label><i class="fas fa-comment"></i> Message</label>
+                        <textarea id="messageInput" placeholder="Enter your message here..." rows="3">Hello from NGL Spammer! 🚀</textarea>
+                    </div>
+                    <button type="submit" id="submit-button" class="submit-btn"><i class="fas fa-paper-plane"></i> <span>Send Messages</span></button>
+                    <div id="result" class="result-message"></div>
+                </form>
+            </div>
+
+            <!-- Footer -->
+            <div class="footer">
+                <i class="fas fa-copyright"></i> 2026 All Rights Reserved.
+                <i class="fas fa-heart heart"></i> Made with <span style="color: #ff6b6b;">❤</span> by Developer
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ===== SIDEBAR =====
+        function toggleMenu() {
+            document.getElementById('sidebar').classList.toggle('active');
+            document.getElementById('overlay').classList.toggle('active');
+            document.getElementById('hamburger').classList.toggle('active');
+            if (window.innerWidth > 768) document.getElementById('mainWrapper').classList.toggle('shifted');
+        }
+        function closeMenu() {
+            document.getElementById('sidebar').classList.remove('active');
+            document.getElementById('overlay').classList.remove('active');
+            document.getElementById('hamburger').classList.remove('active');
+            document.getElementById('mainWrapper').classList.remove('shifted');
+        }
+        document.addEventListener('click', function(e) {
+            const sidebar = document.getElementById('sidebar');
+            const hamburger = document.getElementById('hamburger');
+            if (window.innerWidth <= 768 && sidebar.classList.contains('active')) {
+                if (!sidebar.contains(e.target) && !hamburger.contains(e.target)) closeMenu();
+            }
+        });
+
+        // ===== THEME =====
+        const themeBtn = document.getElementById('theme-button');
+        const saved = localStorage.getItem('nglspammer-theme');
+        if (saved === 'dark') { document.body.classList.add('dark-mode'); themeBtn.className = 'fas fa-sun'; }
+        themeBtn.addEventListener('click', () => {
+            document.body.classList.toggle('dark-mode');
+            const isDark = document.body.classList.contains('dark-mode');
+            themeBtn.className = isDark ? 'fas fa-sun' : 'fas fa-moon';
+            localStorage.setItem('nglspammer-theme', isDark ? 'dark' : 'light');
+        });
+
+        // ===== GREETING =====
+        function showGreetingModal() {
+            const modal = document.getElementById('greetingModal');
+            const now = new Date();
+            document.getElementById('greetingTimeDisplay').textContent = now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false });
+            modal.classList.add('show');
+            setTimeout(() => closeGreetingModal(), 4000);
+        }
+        function closeGreetingModal() { document.getElementById('greetingModal').classList.remove('show'); }
+
+        // ===== FADE-IN =====
+        function handleScroll() {
+            document.querySelectorAll('.fade-in').forEach(el => {
+                if (el.getBoundingClientRect().top < window.innerHeight - 80) el.classList.add('visible');
+            });
+        }
+        window.addEventListener('scroll', handleScroll);
+
+        // ===== FORM =====
+        function handleFormSubmit(event) {
+            event.preventDefault();
+            let username = document.getElementById('usernameInput').value.trim();
+            const amount = document.getElementById('amountInput').value.trim();
+            const message = document.getElementById('messageInput').value.trim();
+
+            if (username.includes('ngl.link/')) {
+                const parts = username.split('ngl.link/');
+                username = parts[parts.length - 1].split('?')[0].split('/')[0].trim();
+            }
+
+            if (!username || !amount || !message) {
+                showResult('⛔ All fields are required.', 'error');
+                return false;
+            }
+            const amountNum = parseInt(amount);
+            if (isNaN(amountNum) || amountNum < 1 || amountNum > 40) {
+                showResult('⛔ Amount must be between 1 and 40.', 'error');
+                return false;
+            }
+
+            sendSpam(username, amountNum, message);
+            return false;
+        }
+
+        async function sendSpam(username, amount, message) {
+            const button = document.getElementById('submit-button');
+            button.disabled = true;
+            button.innerHTML = '<i class="fas fa-spinner fa-pulse"></i> Sending messages...';
+
+            const url = `/nglspam?username=${encodeURIComponent(username)}&amount=${amount}&message=${encodeURIComponent(message)}`;
+            try {
+                const response = await fetch(url);
+                const data = await response.json();
+                if (response.ok && data.success) {
+                    showResult(`✅ ${data.message}`, 'success');
+                    document.getElementById('amountInput').value = '5';
+                    document.getElementById('messageInput').value = '';
+                } else {
+                    showResult(`⚠️ Error: ${data.error || data.message || 'Unknown error'}`, 'error');
+                }
+            } catch (error) {
+                showResult(`❌ Network error: ${error.message}`, 'error');
+            } finally {
+                button.disabled = false;
+                button.innerHTML = '<i class="fas fa-paper-plane"></i> <span>Send Messages</span>';
+            }
+        }
+
+        function showResult(message, type) {
+            const el = document.getElementById('result');
+            el.textContent = message;
+            el.className = `result-message ${type}`;
+            el.style.display = 'flex';
+            setTimeout(() => { el.className = 'result-message'; el.style.display = 'none'; }, 6000);
+        }
+
+        // ===== INIT =====
+        window.addEventListener('load', function() {
+            setTimeout(showGreetingModal, 600);
+            handleScroll();
+        });
+    </script>
+</body>
+</html>
