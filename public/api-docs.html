@@ -1,0 +1,791 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>NGL Spammer | API Docs</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="icon" href="https://iili.io/Cak91iN.png" type="image/png">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Inter', 'Segoe UI', sans-serif;
+            min-height: 100vh;
+            background: url('https://images.unsplash.com/photo-1500382017468-9049fed747ef?q=80&w=2073&auto=format') no-repeat center center/cover;
+            background-attachment: fixed;
+            background-size: cover;
+            background-position: center;
+            position: relative;
+            transition: background 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+            padding: 30px 20px;
+        }
+
+        body.dark-mode {
+            background: url('https://images.unsplash.com/photo-1506905925346-21bda4d32df4?q=80&w=2070&auto=format') no-repeat center center/cover;
+            background-attachment: fixed;
+            background-size: cover;
+            background-position: center;
+        }
+
+        body.dark-mode::before { background: rgba(0, 0, 0, 0.7); }
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.35);
+            z-index: 0;
+            transition: background 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        /* ===== NAV ===== */
+        nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: rgba(255,255,255,0.12);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255,255,255,0.15);
+            padding: 12px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 1000;
+            box-shadow: 0 4px 30px rgba(0,0,0,0.1);
+            transition: all 0.4s cubic-bezier(0.4,0,0.2,1);
+        }
+        body.dark-mode nav { background: rgba(0,0,0,0.5); border-bottom: 1px solid rgba(255,255,255,0.08); }
+        .navbar-left { display: flex; align-items: center; gap: 20px; }
+        .hamburger {
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+            padding: 5px;
+            z-index: 1001;
+        }
+        .hamburger div {
+            width: 25px;
+            height: 3px;
+            background: rgba(255,255,255,0.9);
+            border-radius: 3px;
+            transition: all 0.3s ease;
+        }
+        .hamburger.active div:nth-child(1) { transform: rotate(45deg) translate(5px,5px); }
+        .hamburger.active div:nth-child(2) { opacity: 0; }
+        .hamburger.active div:nth-child(3) { transform: rotate(-45deg) translate(7px,-7px); }
+        nav img { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; border: 2px solid rgba(255,255,255,0.4); }
+        body.dark-mode nav img { border-color: rgba(255,255,255,0.2); }
+        nav h6 { color: rgba(255,255,255,0.95); font-size: 1rem; font-weight: 600; letter-spacing: 0.5px; }
+        #theme-button {
+            font-size: 1.3rem;
+            color: rgba(255,255,255,0.9);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        #theme-button:hover { transform: rotate(20deg) scale(1.05); background: rgba(255,255,255,0.2); }
+        body.dark-mode #theme-button { background: rgba(255,255,255,0.05); border-color: rgba(255,255,255,0.05); }
+
+        /* ===== SIDEBAR ===== */
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: -340px;
+            width: 320px;
+            height: 100vh;
+            background: rgba(10,10,30,0.92);
+            backdrop-filter: blur(25px);
+            border-right: 1px solid rgba(255,255,255,0.08);
+            transition: left 0.4s cubic-bezier(0.4,0,0.2,1);
+            z-index: 999;
+            padding: 25px 20px;
+            overflow-y: auto;
+        }
+        body.dark-mode .sidebar { background: rgba(0,0,0,0.95); }
+        .sidebar.active { left: 0; }
+        .sidebar-header { text-align: center; margin-bottom: 30px; padding-bottom: 20px; border-bottom: 1px solid rgba(255,255,255,0.08); }
+        .sidebar-header h2 { color: #4caf50; font-size: 1.5rem; margin-bottom: 5px; font-weight: 700; }
+        .subtitle { color: rgba(255,255,255,0.5); font-size: 0.7rem; letter-spacing: 1px; text-transform: uppercase; }
+        .sidebar-menu { margin-bottom: 25px; }
+        .menu-item {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 12px 16px;
+            color: rgba(255,255,255,0.7);
+            text-decoration: none;
+            border-radius: 14px;
+            transition: all 0.3s ease;
+            margin-bottom: 4px;
+            font-weight: 500;
+            font-size: 0.95rem;
+        }
+        .menu-item:hover { background: rgba(76,175,80,0.2); color: white; transform: translateX(5px); }
+        .menu-item.active { background: rgba(76,175,80,0.3); color: white; }
+        .menu-item i { width: 24px; font-size: 1.1rem; text-align: center; }
+        .menu-divider { height: 1px; background: rgba(255,255,255,0.06); margin: 15px 0; }
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            backdrop-filter: blur(4px);
+            z-index: 998;
+            display: none;
+            opacity: 0;
+            transition: opacity 0.4s ease;
+        }
+        .overlay.active { display: block; opacity: 1; }
+
+        /* ===== MAIN ===== */
+        .main-wrapper {
+            position: relative;
+            z-index: 1;
+            margin-left: 0;
+            transition: margin-left 0.4s cubic-bezier(0.4,0,0.2,1);
+            padding-top: 80px;
+            min-height: 100vh;
+        }
+        .main-wrapper.shifted { margin-left: 320px; }
+        .container { max-width: 900px; margin: 0 auto; position: relative; z-index: 1; }
+
+        .glass-card {
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(20px);
+            border-radius: 30px;
+            border: 1px solid rgba(255,255,255,0.18);
+            box-shadow: 0 8px 32px rgba(0,0,0,0.08);
+            padding: 30px 35px;
+            margin-bottom: 25px;
+            transition: all 0.4s cubic-bezier(0.4,0,0.2,1);
+        }
+        .glass-card:hover { transform: translateY(-5px); box-shadow: 0 15px 50px rgba(0,0,0,0.12); border-color: rgba(255,255,255,0.25); }
+        body.dark-mode .glass-card { background: rgba(0,0,0,0.35); border-color: rgba(255,255,255,0.08); box-shadow: 0 8px 32px rgba(0,0,0,0.3); }
+
+        .fade-in { opacity: 0; transform: translateY(30px); transition: opacity 0.8s ease, transform 0.8s ease; }
+        .fade-in.visible { opacity: 1; transform: translateY(0); }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 18px;
+            margin-bottom: 5px;
+            flex-wrap: wrap;
+        }
+        .logo-icon {
+            font-size: 48px;
+            background: linear-gradient(135deg, #ffb3ff, #9effff, #c084fc);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        h1 { font-size: 40px; font-weight: 800; background: linear-gradient(120deg, #FFFFFF, #f0b3ff, #b6eaff, #ffd6b3); background-size: 300% 300%; -webkit-background-clip: text; background-clip: text; color: transparent; animation: shimmerHolo 5s ease infinite; }
+        @keyframes shimmerHolo { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
+        h1 span { font-weight: 500; background: linear-gradient(135deg, #ffd966, #ffb3ba, #a0e7ff); -webkit-background-clip: text; background-clip: text; }
+        .tagline { text-align: center; color: rgba(230,220,255,0.8); margin-bottom: 5px; font-size: 1rem; font-weight: 400; }
+        body.dark-mode .tagline { color: rgba(200,190,230,0.7); }
+
+        /* ===== API DOCS ===== */
+        .endpoint-box {
+            background: rgba(0,0,0,0.25);
+            border-radius: 16px;
+            padding: 18px 22px;
+            margin-bottom: 16px;
+            border: 1px solid rgba(255,255,255,0.06);
+            transition: all 0.3s ease;
+        }
+        .endpoint-box:hover { border-color: rgba(255,255,255,0.12); }
+        .endpoint-box .method {
+            display: inline-block;
+            padding: 3px 12px;
+            border-radius: 20px;
+            font-size: 0.65rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            margin-right: 10px;
+        }
+        .method.get { background: rgba(33,150,243,0.3); color: #64b5f6; border: 1px solid rgba(33,150,243,0.2); }
+        .endpoint-box .path {
+            font-family: monospace;
+            color: white;
+            font-size: 1rem;
+            font-weight: 600;
+        }
+        .endpoint-box .desc {
+            color: rgba(255,255,255,0.6);
+            font-size: 0.85rem;
+            margin-top: 6px;
+        }
+        .endpoint-box .params {
+            margin-top: 10px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+        .endpoint-box .params .param {
+            background: rgba(255,255,255,0.05);
+            padding: 3px 10px;
+            border-radius: 16px;
+            font-size: 0.7rem;
+            color: rgba(255,255,255,0.6);
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+        .endpoint-box .params .param .key { color: #ffb3ba; font-weight: 600; }
+        .endpoint-box .params .param .required { color: #ff6b6b; margin-left: 4px; }
+        .endpoint-box .example {
+            background: rgba(0,0,0,0.3);
+            border-radius: 10px;
+            padding: 10px 14px;
+            margin-top: 10px;
+            font-family: monospace;
+            font-size: 0.75rem;
+            color: #a5d6a7;
+            word-break: break-all;
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+        .endpoint-box .example-response {
+            background: rgba(0,0,0,0.3);
+            border-radius: 10px;
+            padding: 10px 14px;
+            margin-top: 8px;
+            font-family: monospace;
+            font-size: 0.75rem;
+            color: #ffd54f;
+            word-break: break-all;
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+
+        /* ===== TRY IT ===== */
+        .try-it {
+            margin-top: 16px;
+            border-top: 1px solid rgba(255,255,255,0.08);
+            padding-top: 16px;
+        }
+        .try-it .toggle-btn {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            color: rgba(255,255,255,0.7);
+            padding: 6px 16px;
+            border-radius: 30px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .try-it .toggle-btn:hover {
+            background: rgba(255,255,255,0.1);
+            color: white;
+        }
+        .try-it .try-content {
+            display: none;
+            margin-top: 14px;
+            animation: fadeSlide 0.3s ease;
+        }
+        .try-it .try-content.open { display: block; }
+        @keyframes fadeSlide {
+            from { opacity: 0; transform: translateY(-8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .try-content .input-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 12px;
+            align-items: flex-end;
+        }
+        .try-content .input-group .field {
+            flex: 1;
+            min-width: 140px;
+        }
+        .try-content .input-group .field label {
+            display: block;
+            color: rgba(255,255,255,0.5);
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 4px;
+        }
+        .try-content .input-group .field input,
+        .try-content .input-group .field textarea {
+            width: 100%;
+            padding: 8px 12px;
+            border-radius: 12px;
+            border: 1px solid rgba(255,255,255,0.1);
+            background: rgba(0,0,0,0.3);
+            color: white;
+            font-family: monospace;
+            font-size: 0.85rem;
+            transition: border-color 0.3s;
+        }
+        .try-content .input-group .field input:focus,
+        .try-content .input-group .field textarea:focus {
+            outline: none;
+            border-color: #4caf50;
+        }
+        .try-content .input-group .field textarea {
+            min-height: 40px;
+            resize: vertical;
+        }
+        .try-content .send-btn {
+            padding: 8px 20px;
+            border-radius: 30px;
+            border: none;
+            background: linear-gradient(135deg, rgba(76,175,80,0.9), rgba(46,125,50,0.9));
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.85rem;
+        }
+        .try-content .send-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4px 15px rgba(76,175,80,0.3);
+        }
+        .try-content .send-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* Request URL */
+        .request-url {
+            background: rgba(0,0,0,0.4);
+            border-radius: 12px;
+            padding: 10px 14px;
+            margin: 10px 0;
+            font-family: monospace;
+            font-size: 0.8rem;
+            color: #81c784;
+            word-break: break-all;
+            border: 1px solid rgba(255,255,255,0.05);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+        .request-url .copy-btn {
+            background: rgba(255,255,255,0.05);
+            border: none;
+            color: rgba(255,255,255,0.5);
+            padding: 4px 12px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 0.7rem;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+        .request-url .copy-btn:hover {
+            background: rgba(255,255,255,0.1);
+            color: white;
+        }
+
+        /* Response */
+        .response-area {
+            background: rgba(0,0,0,0.4);
+            border-radius: 12px;
+            padding: 12px 16px;
+            margin-top: 10px;
+            border: 1px solid rgba(255,255,255,0.05);
+            max-height: 300px;
+            overflow-y: auto;
+            position: relative;
+        }
+        .response-area pre {
+            margin: 0;
+            font-family: monospace;
+            font-size: 0.8rem;
+            color: #e0e0e0;
+            white-space: pre-wrap;
+            word-break: break-word;
+        }
+        .response-area .response-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+        .response-area .response-header .status-badge {
+            font-size: 0.7rem;
+            padding: 2px 10px;
+            border-radius: 30px;
+            font-weight: 600;
+        }
+        .response-area .response-header .status-badge.success {
+            background: rgba(76,175,80,0.2);
+            color: #81c784;
+            border: 1px solid rgba(76,175,80,0.2);
+        }
+        .response-area .response-header .status-badge.error {
+            background: rgba(244,67,54,0.2);
+            color: #ef9a9a;
+            border: 1px solid rgba(244,67,54,0.2);
+        }
+        .response-area .response-header .copy-response-btn {
+            background: rgba(255,255,255,0.05);
+            border: none;
+            color: rgba(255,255,255,0.5);
+            padding: 4px 12px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 0.7rem;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+        .response-area .response-header .copy-response-btn:hover {
+            background: rgba(255,255,255,0.1);
+            color: white;
+        }
+        .response-area .loading-spinner {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: rgba(255,255,255,0.5);
+            font-size: 0.9rem;
+        }
+        .response-area .loading-spinner i {
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        /* ===== FOOTER ===== */
+        .footer {
+            text-align: center;
+            padding: 25px 20px 10px;
+            color: rgba(255,255,255,0.4);
+            font-size: 0.8rem;
+            letter-spacing: 0.5px;
+            border-top: 1px solid rgba(255,255,255,0.05);
+            margin-top: 30px;
+        }
+        .footer i { color: rgba(255,255,255,0.3); margin: 0 4px; }
+        .footer .heart { color: #ff6b6b; animation: heartbeat 1.5s ease infinite; }
+        @keyframes heartbeat { 0%,100% { transform: scale(1); } 50% { transform: scale(1.2); } }
+        body.dark-mode .footer { color: rgba(255,255,255,0.3); }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 760px) {
+            .glass-card { padding: 24px; }
+            h1 { font-size: 32px; }
+            .logo-icon { font-size: 38px; }
+            nav { padding: 10px 16px; }
+            nav h6 { display: none; }
+            .main-wrapper.shifted { margin-left: 0; }
+            .sidebar { width: 300px; left: -320px; }
+            #theme-button { width: 36px; height: 36px; font-size: 1.1rem; }
+            .try-content .input-group { flex-direction: column; }
+            .try-content .input-group .field { width: 100%; }
+            .endpoint-box .path { font-size: 0.85rem; }
+            .endpoint-box .example, .endpoint-box .example-response { font-size: 0.65rem; }
+        }
+        @media (max-width: 480px) {
+            .glass-card { padding: 18px; }
+            h1 { font-size: 26px; }
+            .logo-icon { font-size: 30px; }
+            .request-url { font-size: 0.7rem; }
+            .response-area pre { font-size: 0.7rem; }
+        }
+    </style>
+</head>
+<body>
+    <!-- ===== NAV ===== -->
+    <nav>
+        <div class="navbar-left">
+            <div class="hamburger" id="hamburger" onclick="toggleMenu()"><div></div><div></div><div></div></div>
+            <img src="https://iili.io/Cak91iN.jpg" alt="logo">
+            <h6>NGL Spammer</h6>
+        </div>
+        <i class="fas fa-moon" id="theme-button"></i>
+    </nav>
+
+    <!-- ===== SIDEBAR ===== -->
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-header"><h2>Menu</h2><div class="subtitle">NGL Spammer Navigation</div></div>
+        <div class="sidebar-menu">
+            <a href="/" class="menu-item"><i class="fas fa-home"></i> HOME</a>
+            <a href="/logs.html" class="menu-item"><i class="fas fa-scroll"></i> LOGS</a>
+            <a href="/api-docs.html" class="menu-item active"><i class="fas fa-code"></i> API DOCS</a>
+        </div>
+        <div class="menu-divider"></div>
+        <div class="sidebar-menu">
+            <a href="/profile.html" class="menu-item"><i class="fas fa-user"></i> PROFILE</a>
+            <a href="/settings.html" class="menu-item"><i class="fas fa-cog"></i> SETTINGS</a>
+        </div>
+    </div>
+
+    <div class="overlay" id="overlay" onclick="closeMenu()"></div>
+
+    <!-- ===== MAIN ===== -->
+    <div class="main-wrapper" id="mainWrapper">
+        <div class="container">
+            <!-- Header -->
+            <div class="glass-card fade-in">
+                <div class="logo-container"><i class="fas fa-code logo-icon"></i><h1>API<span>DOCS</span></h1></div>
+                <p class="tagline">Simple and powerful API for NGL message automation</p>
+            </div>
+
+            <!-- API Details -->
+            <div class="glass-card fade-in">
+                <h2 style="font-size: 1.3rem; color: white; margin-bottom: 16px; display: flex; align-items: center; gap: 10px;">
+                    <i class="fas fa-plug" style="color: #4caf50;"></i> Endpoint
+                </h2>
+                <div style="background: rgba(0,0,0,0.4); border-radius: 12px; padding: 12px 16px; margin-bottom: 20px; font-family: monospace; color: #81c784; word-break: break-all;">
+                    <i class="fas fa-link" style="color: #4caf50;"></i> Base URL: <span id="baseUrlDisplay">http://localhost:5000</span>
+                </div>
+
+                <div class="endpoint-box">
+                    <div>
+                        <span class="method get">GET</span>
+                        <span class="path">/nglspam</span>
+                    </div>
+                    <div class="desc">Send multiple anonymous messages to an NGL user.</div>
+                    <div class="params">
+                        <span class="param"><span class="key">username</span> <span class="required">*required</span> — NGL username</span>
+                        <span class="param"><span class="key">amount</span> <span class="required">*required</span> — Number of messages (1-40)</span>
+                        <span class="param"><span class="key">message</span> <span class="required">*required</span> — Message to send</span>
+                    </div>
+                    <div class="example">
+                        <i class="fas fa-terminal" style="color: #4caf50;"></i>
+                        GET /nglspam?username=mythiannj&amount=5&message=Hello%20there!
+                    </div>
+                    <div class="example-response">
+                        <i class="fas fa-check-circle" style="color: #4caf50;"></i>
+                        { "success": true, "message": "Successfully sent 5 messages to mythiannj.", "sent": 5, "failed": 0, "total": 5 }
+                    </div>
+
+                    <!-- ===== TRY IT ===== -->
+                    <div class="try-it">
+                        <button class="toggle-btn" onclick="toggleTry(this)"><i class="fas fa-play"></i> Try it</button>
+                        <div class="try-content">
+                            <div class="input-group">
+                                <div class="field">
+                                    <label>Username</label>
+                                    <input type="text" id="testUsername" placeholder="" value="">
+                                </div>
+                                <div class="field">
+                                    <label>Amount (1-40)</label>
+                                    <input type="number" id="testAmount" placeholder="" value="" min="1" max="40">
+                                </div>
+                            </div>
+                            <div class="input-group">
+                                <div class="field" style="flex:2;">
+                                    <label>Message</label>
+                                    <textarea id="testMessage" placeholder="Enter your message"></textarea>
+                                </div>
+                            </div>
+                            <button class="send-btn" onclick="testApi()"><i class="fas fa-paper-plane"></i> Send Request</button>
+                            <div id="testRequestUrl" class="request-url" style="display:none;">
+                                <span id="testUrlText"></span>
+                                <button class="copy-btn" onclick="copyText('testUrlText')"><i class="fas fa-copy"></i> Copy</button>
+                            </div>
+                            <div id="testResponse" class="response-area" style="display:none;">
+                                <div class="response-header">
+                                    <span id="testStatusBadge" class="status-badge"></span>
+                                    <button class="copy-response-btn" onclick="copyResponse('testResponse')"><i class="fas fa-copy"></i> Copy Response</button>
+                                </div>
+                                <pre id="testResponseBody"></pre>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="background: rgba(255,200,100,0.05); border: 1px solid rgba(255,200,100,0.1); border-radius: 16px; padding: 16px 20px; margin-top: 16px;">
+                    <h3 style="color: #ffd966; font-size: 0.9rem; margin-bottom: 6px;"><i class="fas fa-shield-alt"></i> Rate Limits</h3>
+                    <p style="color: rgba(255,255,255,0.5); font-size: 0.8rem; line-height: 1.6;">
+                        ⚠️ Maximum 40 messages per request. Use responsibly to avoid being blocked by NGL.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Footer -->
+            <div class="footer">
+                <i class="fas fa-copyright"></i> 2026 All Rights Reserved.
+                <i class="fas fa-heart heart"></i> Made with <span style="color: #ff6b6b;">❤</span> by Developer
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ===== SIDEBAR =====
+        function toggleMenu() {
+            document.getElementById('sidebar').classList.toggle('active');
+            document.getElementById('overlay').classList.toggle('active');
+            document.getElementById('hamburger').classList.toggle('active');
+            if (window.innerWidth > 768) document.getElementById('mainWrapper').classList.toggle('shifted');
+        }
+        function closeMenu() {
+            document.getElementById('sidebar').classList.remove('active');
+            document.getElementById('overlay').classList.remove('active');
+            document.getElementById('hamburger').classList.remove('active');
+            document.getElementById('mainWrapper').classList.remove('shifted');
+        }
+        document.addEventListener('click', function(e) {
+            const sidebar = document.getElementById('sidebar');
+            const hamburger = document.getElementById('hamburger');
+            if (window.innerWidth <= 768 && sidebar.classList.contains('active')) {
+                if (!sidebar.contains(e.target) && !hamburger.contains(e.target)) closeMenu();
+            }
+        });
+
+        // ===== THEME =====
+        const themeBtn = document.getElementById('theme-button');
+        const saved = localStorage.getItem('nglspammer-theme');
+        if (saved === 'dark') { document.body.classList.add('dark-mode'); themeBtn.className = 'fas fa-sun'; }
+        themeBtn.addEventListener('click', () => {
+            document.body.classList.toggle('dark-mode');
+            const isDark = document.body.classList.contains('dark-mode');
+            themeBtn.className = isDark ? 'fas fa-sun' : 'fas fa-moon';
+            localStorage.setItem('nglspammer-theme', isDark ? 'dark' : 'light');
+        });
+
+        // ===== FADE-IN =====
+        function handleScroll() {
+            document.querySelectorAll('.fade-in').forEach(el => {
+                if (el.getBoundingClientRect().top < window.innerHeight - 80) el.classList.add('visible');
+            });
+        }
+        window.addEventListener('scroll', handleScroll);
+        window.addEventListener('load', function() {
+            document.getElementById('baseUrlDisplay').textContent = window.location.origin;
+            handleScroll();
+        });
+
+        // ===== BASE URL =====
+        const baseUrl = window.location.origin;
+
+        // ===== TOGGLE TRY IT =====
+        function toggleTry(btn) {
+            const content = btn.parentElement.querySelector('.try-content');
+            content.classList.toggle('open');
+            btn.innerHTML = content.classList.contains('open') ? '<i class="fas fa-times"></i> Close' : '<i class="fas fa-play"></i> Try it';
+        }
+
+        // ===== COPY FUNCTIONS =====
+        function copyText(elementId) {
+            const text = document.getElementById(elementId).innerText;
+            navigator.clipboard.writeText(text).then(() => {
+                const btn = document.querySelector(`#${elementId}`).parentElement.querySelector('.copy-btn');
+                const original = btn.innerHTML;
+                btn.innerHTML = '<i class="fas fa-check"></i> Copied!';
+                setTimeout(() => btn.innerHTML = original, 1500);
+            }).catch(() => {
+                const text = document.getElementById(elementId).innerText;
+                const textarea = document.createElement('textarea');
+                textarea.value = text;
+                document.body.appendChild(textarea);
+                textarea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textarea);
+                const btn = document.querySelector(`#${elementId}`).parentElement.querySelector('.copy-btn');
+                const original = btn.innerHTML;
+                btn.innerHTML = '<i class="fas fa-check"></i> Copied!';
+                setTimeout(() => btn.innerHTML = original, 1500);
+            });
+        }
+
+        function copyResponse(divId) {
+            const pre = document.querySelector(`#${divId} pre`);
+            if (!pre) return;
+            const text = pre.innerText;
+            navigator.clipboard.writeText(text).then(() => {
+                const btn = document.querySelector(`#${divId} .copy-response-btn`);
+                const original = btn.innerHTML;
+                btn.innerHTML = '<i class="fas fa-check"></i> Copied!';
+                setTimeout(() => btn.innerHTML = original, 1500);
+            }).catch(() => {
+                const text = pre.innerText;
+                const textarea = document.createElement('textarea');
+                textarea.value = text;
+                document.body.appendChild(textarea);
+                textarea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textarea);
+                const btn = document.querySelector(`#${divId} .copy-response-btn`);
+                const original = btn.innerHTML;
+                btn.innerHTML = '<i class="fas fa-check"></i> Copied!';
+                setTimeout(() => btn.innerHTML = original, 1500);
+            });
+        }
+
+        // ===== TEST API =====
+        async function testApi() {
+            const username = document.getElementById('testUsername').value.trim();
+            const amount = document.getElementById('testAmount').value.trim();
+            const message = document.getElementById('testMessage').value.trim();
+
+            if (!username || !amount || !message) {
+                alert('Please fill in all fields.');
+                return;
+            }
+
+            const amountNum = parseInt(amount);
+            if (isNaN(amountNum) || amountNum < 1 || amountNum > 40) {
+                alert('Amount must be between 1 and 40.');
+                return;
+            }
+
+            const url = `${baseUrl}/nglspam?username=${encodeURIComponent(username)}&amount=${amountNum}&message=${encodeURIComponent(message)}`;
+
+            // Show request URL
+            const requestUrlDiv = document.getElementById('testRequestUrl');
+            document.getElementById('testUrlText').textContent = url;
+            requestUrlDiv.style.display = 'flex';
+
+            // Show response area with loading
+            const responseDiv = document.getElementById('testResponse');
+            const statusBadge = document.getElementById('testStatusBadge');
+            const responseBody = document.getElementById('testResponseBody');
+
+            responseDiv.style.display = 'block';
+            statusBadge.textContent = 'Sending...';
+            statusBadge.className = 'status-badge';
+            responseBody.textContent = '';
+
+            try {
+                const res = await fetch(url);
+                const data = await res.json();
+                const pretty = JSON.stringify(data, null, 2);
+                responseBody.textContent = pretty;
+
+                if (res.ok) {
+                    statusBadge.textContent = `${res.status} OK`;
+                    statusBadge.className = 'status-badge success';
+                } else {
+                    statusBadge.textContent = `${res.status} Error`;
+                    statusBadge.className = 'status-badge error';
+                }
+            } catch (error) {
+                responseBody.textContent = 'Error: ' + error.message;
+                statusBadge.textContent = 'Request Failed';
+                statusBadge.className = 'status-badge error';
+            }
+        }
+    </script>
+</body>
+</html>
