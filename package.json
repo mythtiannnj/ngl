@@ -1,0 +1,23 @@
+{
+  "name": "ngl-spammer",
+  "version": "1.0.0",
+  "description": "NGL Spammer - Automated NGL message sender with glass UI",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "dev": "nodemon index.js"
+  },
+  "dependencies": {
+    "axios": "^1.6.0",
+    "express": "^4.18.2"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.1"
+  },
+  "keywords": ["ngl", "spammer", "automation", "glass-ui"],
+  "author": "NGL Spammer Team",
+  "license": "MIT",
+  "engines": {
+    "node": ">=14.0.0"
+  }
+}
